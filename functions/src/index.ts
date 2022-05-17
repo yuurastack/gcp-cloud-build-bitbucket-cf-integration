@@ -3,7 +3,7 @@ import axios from "axios";
 import {CloudBuildData} from "./models/cloud-build";
 import {getAuthToken, getBitbucketState} from "./utils/bitbucketUtils";
 
-exports.sreTestPubSub = functions.pubsub.topic("cloud-builds").onPublish(async (message: functions.pubsub.Message) => {
+exports.bitbucketBuildStatus = functions.pubsub.topic("cloud-builds").onPublish(async (message: functions.pubsub.Message) => {
   const pubsubMessage = message.data;
   const dataString = Buffer.from(pubsubMessage, "base64").toString();
   const data: CloudBuildData = JSON.parse(dataString);
