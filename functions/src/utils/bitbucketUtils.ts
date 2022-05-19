@@ -21,7 +21,6 @@ async function safePromise(promise: Promise<any>):Promise<any[]> {
 }
 
 export async function getAuthToken(): Promise<[string, string]> {
-
   const username: string = process.env.BB_USERNAME || "";
   const password: string = process.env.BB_PASSWORD || "";
   const data = qs.stringify({
@@ -46,5 +45,5 @@ export async function getAuthToken(): Promise<[string, string]> {
     return ["", "error"];
   }
 
-  return [respContainer.response.access_token, ""];
+  return [respContainer.response.data.access_token, ""];
 }

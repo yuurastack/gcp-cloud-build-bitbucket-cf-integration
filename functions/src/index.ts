@@ -26,12 +26,13 @@ exports.bitbucketBuildStatus = functions.pubsub.topic("cloud-builds").onPublish(
   };
 
   // Send request to Bitbucket Oauth.
+  console.log("Beggining to call for Bitbucket token");
   const [token, error] = await getAuthToken();
   if (error) {
-    console.log( "Bitbucket Auth Error");
+    console.error( "Bitbucket Auth Error");
     return;
   }
-  const url = `"https://api.bitbucket.org/2.0/repositories"/${workspace}/${repoSlug}/commit/${commitSha}/statuses/build`;
+  const url = `https://api.bitbucket.org/2.0/repositories/${workspace}/${repoSlug}/commit/${commitSha}/statuses/build`;
 
 
   const config = {
@@ -42,25 +43,19 @@ exports.bitbucketBuildStatus = functions.pubsub.topic("cloud-builds").onPublish(
       Accept: "application/json",
     },
     data: payload,
-    payload,
   };
+
   // Send request to Bitbucket Build.
   postBuild(config);
 });
 
 
-function postBuild(config: any, retry=0) {
-  if (retry > 3) {
-    console.log("Bitbucket build won't respond");
-    return;
-  }
-
+function postBuild(config: any) {
   axios(config)
-      .then((reponse) => {
-        console.log(reponse);
+      .then(() => {
+        console.log("successful build post");
       })
       .catch((error) => {
-        console.log(error);
-        postBuild(config, retry +1);
+        console.error("unsuccessful build post");
       });
 }
