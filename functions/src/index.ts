@@ -1,5 +1,5 @@
 import * as functions from "firebase-functions";
-import axios, { AxiosRequestConfig } from "axios";
+import axios, {AxiosRequestConfig} from "axios";
 import {CloudBuildData} from "./models/cloud-build";
 import {getAuthToken, getBitbucketState} from "./utils/bitbucketUtils";
 
@@ -27,7 +27,7 @@ exports.bitbucketBuildStatus = functions.pubsub.topic("cloud-builds").onPublish(
 
   // Send request to Bitbucket Oauth.
   const [token, error] = await getAuthToken();
-  if (!!error) {
+  if (error) {
     console.error(error);
     return;
   }

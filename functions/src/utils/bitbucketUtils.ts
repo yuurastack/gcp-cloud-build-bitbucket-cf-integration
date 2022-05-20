@@ -43,7 +43,7 @@ export async function getAuthToken(): Promise<[string, string]> {
   };
   const respContainer = {} as RespContainer;
   [respContainer.response, respContainer.error] = await safePromise(axios(config));
-  if (!!respContainer.error) {
+  if (respContainer.error) {
     return ["", "error"];
   }
 
