@@ -23,6 +23,8 @@ async function safePromise(promise: Promise<any>):Promise<any[]> {
 export async function getAuthToken(): Promise<[string, string]> {
   const username: string = process.env.BB_USERNAME || "";
   const password: string = process.env.BB_PASSWORD || "";
+  if (!username || !password) return ["", "Bitbucket Auth environment variable missing"];
+
   const data = qs.stringify({
     "grant_type": "client_credentials",
   });
@@ -41,7 +43,7 @@ export async function getAuthToken(): Promise<[string, string]> {
   };
   const respContainer = {} as RespContainer;
   [respContainer.response, respContainer.error] = await safePromise(axios(config));
-  if (respContainer.error) {
+  if (!!respContainer.error) {
     return ["", "error"];
   }
 

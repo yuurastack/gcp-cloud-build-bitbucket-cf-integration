@@ -1,14 +1,14 @@
 import * as functions from "firebase-functions";
-import axios from "axios";
+import axios, { AxiosRequestConfig } from "axios";
 import {CloudBuildData} from "./models/cloud-build";
 import {getAuthToken, getBitbucketState} from "./utils/bitbucketUtils";
 
 exports.bitbucketBuildStatus = functions.pubsub.topic("cloud-builds").onPublish(async (message: functions.pubsub.Message) => {
-  const pubsubMessage = message.data;
-  const dataString = Buffer.from(pubsubMessage, "base64").toString();
+  const pubsubMessage: string = message.data;
+  const dataString: string = Buffer.from(pubsubMessage, "base64").toString();
   const data: CloudBuildData = JSON.parse(dataString);
   const commitSha: string = data.sourceProvenance.resolvedRepoSource.commitSha;
-  const repoName = data.sourceProvenance.resolvedRepoSource.repoName;
+  const repoName: string = data.sourceProvenance.resolvedRepoSource.repoName;
   const [, workspace, repoSlug]: string[] = repoName.split("_");
 
   // build Bitbucket payload
@@ -26,16 +26,15 @@ exports.bitbucketBuildStatus = functions.pubsub.topic("cloud-builds").onPublish(
   };
 
   // Send request to Bitbucket Oauth.
-  console.log("Beggining to call for Bitbucket token");
   const [token, error] = await getAuthToken();
-  if (error) {
-    console.error( "Bitbucket Auth Error");
+  if (!!error) {
+    console.error(error);
     return;
   }
   const url = `https://api.bitbucket.org/2.0/repositories/${workspace}/${repoSlug}/commit/${commitSha}/statuses/build`;
 
 
-  const config = {
+  const config: AxiosRequestConfig<any> = {
     method: "post",
     url,
     headers: {
@@ -50,12 +49,12 @@ exports.bitbucketBuildStatus = functions.pubsub.topic("cloud-builds").onPublish(
 });
 
 
-function postBuild(config: any) {
+function postBuild(config: AxiosRequestConfig<any>) {
   axios(config)
       .then(() => {
         console.log("successful build post");
       })
-      .catch((error) => {
+      .catch(() => {
         console.error("unsuccessful build post");
       });
 }

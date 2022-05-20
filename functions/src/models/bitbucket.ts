@@ -4,7 +4,7 @@ export interface BitbucketAuthResponse {
 
 export interface RespContainer {
     response:BitbucketAuthResponse;
-    error: string
+    error: any
 }
 
 export interface data {
